@@ -34,7 +34,7 @@
         <div>
         @csrf
         <input type="number" step=".01" class="newProgress">
-         <button class="update" data-task="{{ $task->id }}">Update Progress</button>
+         <button class="update" data-task="{{ $task->id }}" >Update Progress</button>
         </div>
         
         
@@ -62,6 +62,7 @@
           e.preventDefault();
           var progress = $(".newProgress").val();
           var task_id = $(this).data('task');
+
           $.ajax({
             headers: {
                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

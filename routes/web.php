@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::group(['middleware'=>['auth', 'isAdmin']], function(){
     Route::get('/dashboard', 'AdminTaskController@index')->name('dashboard');
@@ -44,7 +44,7 @@ Route::group(['middleware'=>'auth'], function(){
     Route::post('/deliverable', 'DeliverableController@store')->name('deliverable.store');
 
 
-    Route::put('/task/updateProgress','UserTaskController@updateProgress')->name('update.progress');
+    Route::put('/tasks','UserTaskController@updateProgress')->name('update.progress');
 
     Route::get('/tasks/history', 'UserTaskController@taskHistory')->name('tasks.history');
     Route::put('/task','UserTaskController@makeClaimRequest')->name('task.claim');

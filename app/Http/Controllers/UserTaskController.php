@@ -13,7 +13,7 @@ class UserTaskController extends Controller
 
     public function index(){
         $department_id = auth()->user()->department_id;
-        $tasks = DB::table('tasks')->where('department_id', $department_id)->get(); 
+        $tasks = DB::table('tasks')->where('department_id', 1)->get(); 
         return view('user.index', compact('tasks'));
     }
 
@@ -24,7 +24,7 @@ class UserTaskController extends Controller
     }
 
     public function updateProgress(Request $request){
-        //security needed 
+
         $newProgress = $request->progress; 
         try{
             DB::table('tasks')->where('id', $request->id)
@@ -40,31 +40,37 @@ class UserTaskController extends Controller
                 'value'=>$e->getMessage(), 
             ]);
         }
-
-       
     }
 
     public function makeClaimRequest(Request $request){
-        $user_id = $request->user_id;
-        $task_id = $request->task_id;
-        try{
-            //If the user already requested the task then display a message and return
-            if(DB::table('task_user')->where('task_id', $task_id)->where('user_id', $user_id)->get()->first() != null){
-                Session::flash('message', 'Request Already Sent!');
+      
+        //Security condition to check that department matches
+        $user_department = DB::table('users')->where('id', $request->user_id)->get()->first()->department_id;
+        $task_department = DB::table('tasks')->where('id', $request->task_id)->get()->first()->department_id;
+        if($user_department == $task_department){
+            try{
+                //If the user already requested the task then display a message and return
+                if(DB::table('task_user')->where('task_id', $request->task_id)->where('user_id', $request->user_id)->get()->first() != null){
+                    Session::flash('message', 'Request Already Sent!');
+                    return redirect()->back();
+                }
+                //If not add a new record
+                DB::insert('insert into task_user (user_id, task_id) values (?, ?)', [
+                    $request->user_id,
+                    $request->task_id,
+                ]);  
+                Session::flash('message', 'Request delivered!');
+                return redirect()->back();
+            }catch(Exception $e){
+                Session::flash('message', $e->getMessage());
                 return redirect()->back();
             }
-            //If not add a new record
-            DB::insert('insert into task_user (user_id, task_id) values (?, ?)', [
-                $user_id,
-                $task_id,
-            ]);  
-            Session::flash('message', 'Request delivered!');
-            return redirect()->back();
-        }catch(Exception $e){
-            Session::flash('message', $e->getMessage());
+
+        }else{
+            Session::flash('message', 'Not authorized');
             return redirect()->back();
         }
-         
+  
     }
  
 }
