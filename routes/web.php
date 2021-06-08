@@ -23,34 +23,34 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 
 Route::get('/dashboard', 'AdminTaskController@index')->name('dashboard');
-
-Route::get('/requestedTasks', 'AdminTaskController@displayClaimRequests')->name('tasks.requested');
 Route::get('/task/create','AdminTaskController@create')->name('task.create');
 Route::post('/task/store','AdminTaskController@store')->name('task.store');
+Route::get('/task/{id}','AdminTaskController@edit')->name('task.edit');
+Route::put('/task/{id}','AdminTaskController@update')->name('task.update');
 
-Route::get('/task/edit/{id}','AdminTaskController@edit')->name('task.edit');
-Route::put('/task/update/{id}','AdminTaskController@update')->name('task.update');
+Route::get('/claim/requests', 'AdminTaskController@displayClaimRequests')->name('tasks.requested');
+Route::get('/deliverable/requests', 'DeliverableController@index')->name('deliverables.requested');
 
-Route::put('/responde', 'AdminTaskController@respondeToClaimRequest')->name('claim.responde');
+Route::put('/claim/respond', 'AdminTaskController@respondeToClaimRequest')->name('claim.responde');
+Route::put('/deliverable/respond', 'DeliverableController@respondToDeliveryRequest')->name('deliverable.responde');
 
-Route::put('/deliverable', 'DeliverableController@respondToDeliveryRequest')->name('deliverable.responde');
 Route::get('/deliverable/download/{id}', 'DeliverableController@download')->name('deliverable.download');
 
 
-Route::get('/deliverable', 'DeliverableController@index')->name('deliverables.requested');
+
 
 
 
 //------------------For user-------------------------
 Route::get('/tasks', 'UserTaskController@index')->name('user.index');
 
-Route::get('/deliverable/create', 'DeliverableController@create');
+Route::get('/deliverable/create/{id}', 'DeliverableController@create')->name('deliverable.create');
 Route::post('/deliverable', 'DeliverableController@store')->name('deliverable.store');
 
 
 Route::put('/task/updateProgress','UserTaskController@updateProgress')->name('update.progress');
 
-Route::get('/tasks/user', 'UserTaskController@taskHistory');
+Route::get('/tasks/history', 'UserTaskController@taskHistory')->name('tasks.history');
 Route::put('/task','UserTaskController@makeClaimRequest')->name('task.claim');
 
 Route::post('/comment', 'CommentController@makeComment')->name('add.comment');
